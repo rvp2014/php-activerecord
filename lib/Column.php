@@ -18,7 +18,8 @@ class Column
 	const DATETIME	= 4;
 	const DATE		= 5;
 	const TIME		= 6;
-
+	const LOB		= 7; //supporting blobs for oracle
+	
 	/**
 	 * Map a type to an column type.
 	 * @static
@@ -40,7 +41,10 @@ class Column
 		'double'	=> self::DECIMAL,
 		'numeric'	=> self::DECIMAL,
 		'decimal'	=> self::DECIMAL,
-		'dec'		=> self::DECIMAL);
+		'dec'		=> self::DECIMAL,
+		
+		'blob'		=> self::LOB,
+		'clob'		=> self::LOB);
 
 	/**
 	 * The true name of this column.
@@ -172,6 +176,9 @@ class Column
 					return new DateTime($value->format('Y-m-d H:i:s T'));
 
 				return $connection->string_to_datetime($value);
+			
+			//supports getting blobs for oracle
+			case self::LOB: if(is_resource($value)) return stream_get_contents($value);
 		}
 		return $value;
 	}
